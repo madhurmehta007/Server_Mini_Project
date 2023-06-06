@@ -15,6 +15,11 @@
         android:scrollbars="vertical"
         tools:text="Log will be displayed here" />
 
+    <EditText
+        android:id="@+id/et_log"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"/>
+
     <Button
         android:id="@+id/button_start"
         android:layout_width="wrap_content"

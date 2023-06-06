@@ -1,11 +1,14 @@
 package dev.work.server_mini_project
 
+import android.annotation.SuppressLint
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
+import android.widget.EditText
 import android.widget.TextView
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.io.BufferedReader
 import java.io.InputStreamReader
@@ -17,17 +20,19 @@ import java.util.Random
 class MainActivity : AppCompatActivity() {
     private lateinit var startButton: Button
     private lateinit var logTextView: TextView
+    private lateinit var logEditText: EditText
 
     private val host = "192.168.1.38" // Replace with the actual server IP address
     private val port = 12345 // Replace with the actual server port
 
+    @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         startButton = findViewById(R.id.button_start)
         logTextView = findViewById(R.id.text_log)
-
+        logEditText = findViewById(R.id.et_log)
         startButton.setOnClickListener {
             GlobalScope.launch(Dispatchers.IO) {
                 startServer()
@@ -35,7 +40,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun startServer() {
+    private suspend fun startServer() {
         log("Server listening on $host:$port")
 
         val serverSocket = ServerSocket(port)
@@ -77,7 +82,7 @@ class MainActivity : AppCompatActivity() {
         log("Decrypted message: $decryptedMessage")
 
         // Send a response to the client
-        val response = "Hello, client!"
+        val response = logEditText.text.toString()
         val encryptedResponse = encryptMessage(response, shared_secret)
         log("Sending response: $response")
         writer.write(encryptedResponse + "\n")
@@ -85,6 +90,8 @@ class MainActivity : AppCompatActivity() {
 
         // Close the connection
         clientSocket.close()
+
+        delay(2000)
         serverSocket.close()
 
         log("Connection closed")
