@@ -22,17 +22,17 @@ class MainActivity : AppCompatActivity() {
     private lateinit var logTextView: TextView
     private lateinit var logEditText: EditText
 
-    private val host = "192.168.1.38" // Replace with the actual server IP address
+    private val host = "100.72.0.228" // Replace with the actual server IP address
     private val port = 12345 // Replace with the actual server port
 
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
+        window.setStatusBarColor(this.getResources().getColor(R.color.transparent))
         startButton = findViewById(R.id.button_start)
         logTextView = findViewById(R.id.text_log)
-        logEditText = findViewById(R.id.et_log)
+        logEditText = findViewById(R.id.searchEditText)
         startButton.setOnClickListener {
             GlobalScope.launch(Dispatchers.IO) {
                 startServer()
