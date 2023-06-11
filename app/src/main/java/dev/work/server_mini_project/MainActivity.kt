@@ -6,6 +6,8 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
+import android.widget.Toast
+import dev.work.server_mini_project.databinding.ActivityMainBinding
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
@@ -18,22 +20,25 @@ import java.util.Random
 
 
 class MainActivity : AppCompatActivity() {
-    private lateinit var startButton: Button
-    private lateinit var logTextView: TextView
-    private lateinit var logEditText: EditText
+    private lateinit var binding: ActivityMainBinding
 
-    private val host = "100.72.0.228" // Replace with the actual server IP address
+    private var host = "100.103.66.179" // Replace with the actual server IP address
     private val port = 12345 // Replace with the actual server port
 
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         window.setStatusBarColor(this.getResources().getColor(R.color.transparent))
-        startButton = findViewById(R.id.button_start)
-        logTextView = findViewById(R.id.text_log)
-        logEditText = findViewById(R.id.searchEditText)
-        startButton.setOnClickListener {
+
+        binding.btnIP.setOnClickListener {
+            val etIP = binding.etIp.text.toString()
+            host = etIP
+            Toast.makeText(this, "IP Updated", Toast.LENGTH_SHORT).show()
+        }
+
+        binding.buttonStart.setOnClickListener {
             GlobalScope.launch(Dispatchers.IO) {
                 startServer()
             }
@@ -82,16 +87,16 @@ class MainActivity : AppCompatActivity() {
         log("Decrypted message: $decryptedMessage")
 
         // Send a response to the client
-        val response = logEditText.text.toString()
+        val response = binding.searchEditText.text.toString()
         val encryptedResponse = encryptMessage(response, shared_secret)
         log("Sending response: $response")
         writer.write(encryptedResponse + "\n")
         writer.flush()
 
+        delay(2000)
         // Close the connection
         clientSocket.close()
 
-        delay(2000)
         serverSocket.close()
 
         log("Connection closed")
@@ -99,7 +104,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun log(message: String) {
         runOnUiThread {
-            logTextView.append("$message\n")
+            binding.textLog.append("$message\n")
         }
     }
 
